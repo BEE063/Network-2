@@ -32,7 +32,18 @@ namespace PP_lab1
                 array[0] = false;
             }
         }
-
+        public static void GenerateRequest(BitArray array, bool isValid)
+        {
+            if (isValid == true)
+            {
+                array[0] = true;
+            }
+            else
+            {
+                array[0] = false;
+            }
+        }
 
     }
 }
+

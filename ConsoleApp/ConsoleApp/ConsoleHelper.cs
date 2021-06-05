@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-namespace PP_lab1
+namespace ConsoleApp
 {
     public static class ConsoleHelper
     {
@@ -39,31 +39,39 @@ namespace PP_lab1
             {
                 Console.Write(info + " : ");
                 if (array[0] == true)
-                    Console.WriteLine("Данные пришли");
+                    Console.WriteLine("Квитанция от другого потока - true");
                 else
-                    Console.WriteLine("Данные не пришли");
+                    Console.WriteLine("Квитанция от другого потока - false");
             }
         }
-        public static void WriteToConsoleRequest(string info, string type, BitArray array)
+        public static void WriteToConsoleRequest(string info,string type, BitArray array)
         {
             lock (LockObject)
             {
-                if (type == "connect")
+                if (array[0] == true && type == "connect")
                 {
-                    Console.Write(info + " : ");
-                    if (array[0] == true)
-                        Console.WriteLine("Другой поток готов принимать данные");
-                    else
-                        Console.WriteLine("Другой поток не готов принимать данные");
+                    Console.WriteLine(info + " : Другой поток запрашивает соеденение");
                 }
                 else
                 {
-                    Console.Write(info + " : ");
-                    if (array[0] == true)
-                        Console.WriteLine("Поток завершил работу и готов разорвать соединение");
-                    else
-                        Console.WriteLine("Поток не завершил работу и готов разорвать соединение");
+                    Console.WriteLine(info + " : Другой поток разрешает соеденение");
                 }
+                     
+            }
+        }
+        public static void WriteToConsoleDisconect(string info, string type, BitArray array)
+        {
+            lock (LockObject)
+            {
+                if (array[0] == true && type == "disconnect")
+                {
+                    Console.WriteLine(info + " : Другой поток запрашивает разрыв подключения");
+                }
+                else
+                {
+                    Console.WriteLine(info + " : Другой поток разрешает разрыв подключения");
+                }
+
             }
         }
         public static void WriteToConsoleArray(string info, BitArray array)
