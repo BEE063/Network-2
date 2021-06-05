@@ -30,8 +30,9 @@ namespace PP_lab1
         }
         public void SendDataToSecond(object obj)
         {
-            _receiveSemaphore.WaitOne();
+            
             _postData = (PostDataToSecondWT)obj;
+            _receiveSemaphore.WaitOne();
 
             Buffer buffer = new Buffer();
             buffer.request = _receivedRequest;
@@ -87,10 +88,12 @@ namespace PP_lab1
         }
         public void SendRequestToSecond(object obj)
         {
+            _sendSemaphore.WaitOne();
             _postRequest = (PostRequestToSecondWt)obj;
             _sendRequest = new BitArray(1);
             Frame.GenerateReceipt(_sendRequest, true);
             _postRequest(_sendRequest);
+            _sendSemaphore.Release();
         }
         public void ReceiveRequestFromSecond(BitArray array)
         {

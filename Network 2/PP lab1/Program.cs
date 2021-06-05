@@ -26,8 +26,8 @@ namespace ThreadsEdu
             SecondStation secondStation = new SecondStation(ref firstReceiveSemaphore, ref secondReceiveSemaphore);
 
             Thread threadFifth = new Thread(new ParameterizedThreadStart(firstStation.SendRequestToSecond));
-            Thread threadSixth = new Thread(new ParameterizedThreadStart(secondStation.SendRequestToFirst));
             Thread threadFirst = new Thread(new ParameterizedThreadStart(firstStation.SendDataToSecond));
+            Thread threadSixth = new Thread(new ParameterizedThreadStart(secondStation.SendRequestToFirst));
             Thread threadSecond = new Thread(new ParameterizedThreadStart(secondStation.SendReceiptToFirst));
             Thread threadThird = new Thread(new ParameterizedThreadStart(secondStation.SendDataToFirst));
             Thread threadFourth = new Thread(new ParameterizedThreadStart(firstStation.SendReceiptToSecond));
@@ -42,8 +42,8 @@ namespace ThreadsEdu
             PostRequestToSecondWt postRequestToSecondWt = new PostRequestToSecondWt(secondStation.ReceivedRequestFromFirst);
 
             threadFifth.Start(postRequestToSecondWt);
-            threadSixth.Start(postRequestToFirstWt);
             threadFirst.Start(postDataToSecondWt);
+            threadSixth.Start(postRequestToFirstWt);
             threadSecond.Start(postReciptToFirstWt);
             threadThird.Start(postDataToFirstWt);
             threadFourth.Start(postReceiptToSecondWt);
