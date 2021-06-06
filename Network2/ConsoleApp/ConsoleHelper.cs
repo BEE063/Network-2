@@ -8,13 +8,26 @@ namespace ConsoleApp
     public static class ConsoleHelper
     {
         public static object LockObject = new Object();
-        public static void WriteTextMessageToConsole(BitArray array)
+        public static void WriteTextMessageToConsole(string info, BitArray array)
         {
             lock (LockObject)
             {
-                byte[] bytesBack = BitArrayToByteArray(array);
-                string textBack = System.Text.Encoding.Unicode.GetString(bytesBack);
-                Console.WriteLine("Переданный текст: " + textBack);
+                BitArray bitArray = new BitArray(8);
+                for (int i = 0; i < 8; i++)
+                {
+                    bitArray[i] = array[i];
+                }
+               
+                
+                BitArray bitMessage = new BitArray(array.Length - 8);
+                for (int i = 0; i < array.Length - 8; i++)
+                {
+                    bitMessage[i] = array[8 + i];
+                }
+                byte[] bytesMessageBack = BitArrayToByteArray(bitMessage);
+                string textMessageBack = System.Text.Encoding.Unicode.GetString(bytesMessageBack);
+                Console.WriteLine(info + textMessageBack);
+
             }
         }
 
@@ -44,7 +57,7 @@ namespace ConsoleApp
                     Console.WriteLine("Квитанция от другого потока - false");
             }
         }
-        public static void WriteToConsoleRequest(string info,string type, BitArray array)
+        public static void WriteToConsoleRequest(string info, string type, BitArray array)
         {
             lock (LockObject)
             {
@@ -56,10 +69,10 @@ namespace ConsoleApp
                 {
                     Console.WriteLine(info + " : Другой поток разрешает соеденение");
                 }
-                     
+
             }
         }
-        public static void WriteToConsoleDisconect(string info, string type, BitArray array)
+        public static void WriteToConsoleDisconnect(string info, string type, BitArray array)
         {
             lock (LockObject)
             {

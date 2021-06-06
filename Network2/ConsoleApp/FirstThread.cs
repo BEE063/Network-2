@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using ThreadsEdu;
+using Buffer = PP_lab1.Buffer;
 
 namespace ConsoleApp
 {
@@ -42,34 +43,63 @@ namespace ConsoleApp
             _sendSemaphore.Release();
             //3
             _receiveSemaphore.WaitOne();
-            ConsoleHelper.WriteToConsoleRequest("1 поток", "connect", _receivedMessage);
-            Frame.GenerateReceipt(_sendReceipt, true);
-            _post(_sendReceipt);
+
+            ResendData(_post, _receivedMessage);
+
             _sendSemaphore.Release();
             //4
             _receiveSemaphore.WaitOne();
 
+            ResendData(_post, _receivedMessage);
+            ConsoleHelper.WriteToConsoleReceipt("1 поток", _receivedMessage);
+            ConsoleHelper.WriteToConsoleRequest("1 поток","connect", _receivedMessage);
             _sendSemaphore.Release();
             //5
             _receiveSemaphore.WaitOne();
-            ConsoleHelper.WriteToConsole("1 поток", "Данные полученны");
+
+            Buffer buffer = new Buffer();
             ConsoleHelper.WriteToConsoleArray("1 поток", _receivedMessage);
-            ConsoleHelper.WriteTextMessageToConsole(_receivedMessage);
-            
-            Frame.GenerateRequest(_sendReceipt, true);
+            ConsoleHelper.WriteTextMessageToConsole("1 поток переданный текст: ", _receivedMessage);
+            Frame.GenerateReceipt(_sendReceipt, buffer.CheckSum(_receivedMessage));
+            bool check = buffer.CheckSum(_receivedMessage);
             _post(_sendReceipt);
             _sendSemaphore.Release();
-            //6
+            ////6
             _receiveSemaphore.WaitOne();
 
-            ConsoleHelper.WriteToConsoleDisconect("1 поток", "", _receivedMessage);
-            ConsoleHelper.WriteToConsole("1 поток", "Заканчиваю работу");
+            if(check==false)
+            {
+                ConsoleHelper.WriteToConsoleArray("1 поток", _receivedMessage);
+                ConsoleHelper.WriteTextMessageToConsole("1 поток переданный текст: ", _receivedMessage);
+                Frame.GenerateReceipt(_sendReceipt, buffer.CheckSum(_receivedMessage));
+                _post(_sendReceipt);
+            }
+
             _sendSemaphore.Release();
+            //7
+            _receiveSemaphore.WaitOne();
+
+            ConsoleHelper.WriteToConsoleDisconnect("1 поток","", _receivedMessage);
+            ConsoleHelper.WriteToConsole("2 поток", "Заканчиваю работу");
+
+            _sendSemaphore.Release();
+  
 
         }
         public void ReceiveData(BitArray array)
         {
             _receivedMessage = array;
+        }
+        public void ResendData(PostToSecondWT _postTo, BitArray array)
+        {
+            if (array[0] == false || array == null)
+            {
+                ConsoleHelper.WriteToConsoleReceipt("1 поток", array);
+                ConsoleHelper.WriteToConsole("1 поток", "Отправляю повторно");   
+                _postTo(Frame.GenerateData("Hello"));
+
+            }
+
         }
 
     }
