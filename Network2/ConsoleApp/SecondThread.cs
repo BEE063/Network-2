@@ -13,9 +13,9 @@ namespace ConsoleApp
     {
         private Semaphore _sendSemaphore;
         private Semaphore _receiveSemaphore;
-        private BitArray _receivedMessage;
-        private BitArray _sendMessage;
-        private BitArray _sendReceipt;
+        private BitArray[] _receivedMessage;
+        private BitArray[] _sendMessage;
+        private BitArray[] _sendReceipt;
         private PostToFirstWT _post;
 
         public SecondThread(ref Semaphore sendSemaphore, ref Semaphore receiveSemaphore)
@@ -31,7 +31,7 @@ namespace ConsoleApp
             _receiveSemaphore.WaitOne();
 
             ConsoleHelper.WriteToConsoleRequest("2 поток","connect",_receivedMessage);
-            _sendReceipt = new BitArray(1);
+            _sendReceipt = new BitArray[1];
             Frame.GenerateReceipt(_sendReceipt, true);
             _post(_sendReceipt);
 
@@ -41,7 +41,7 @@ namespace ConsoleApp
 
             Buffer buffer = new Buffer();
             ConsoleHelper.WriteToConsole("2 поток", "Данные полученны");
-            ConsoleHelper.WriteToConsoleArray("2 поток",_receivedMessage);
+            ConsoleHelper.WriteToConsoleMatrixBitArray("2 поток",_receivedMessage);
             ConsoleHelper.WriteTextMessageToConsole("2 поток: ",_receivedMessage);
             bool check = buffer.CheckSum(_receivedMessage);
             Frame.GenerateReceipt(_sendReceipt, check);
@@ -51,20 +51,20 @@ namespace ConsoleApp
             //3
             _receiveSemaphore.WaitOne();
 
-            if (check==false)
+            if (check == false)
             {
-                ConsoleHelper.WriteToConsoleArray("2 поток", _receivedMessage);
+                ConsoleHelper.WriteToConsoleMatrixBitArray("2 поток", _receivedMessage);
                 ConsoleHelper.WriteTextMessageToConsole("2 поток переданный текст: ", _receivedMessage);
                 Frame.GenerateReceipt(_sendReceipt, buffer.CheckSum(_receivedMessage));
             }
-            
+
             _sendSemaphore.Release();
             //4
             _receiveSemaphore.WaitOne();
 
             ConsoleHelper.WriteToConsoleRequest("2 поток", "", _receivedMessage);
             ConsoleHelper.WriteToConsole("2 поток", "Подготавливаю данные.");
-            _post(Frame.GenerateErrorData("World"));
+            _post(Frame.GenerateData("World"));
 
             _sendSemaphore.Release();
             ////5
@@ -85,13 +85,13 @@ namespace ConsoleApp
             _sendSemaphore.Release();
 
         }
-        public void ReceiveData(BitArray array)
+        public void ReceiveData(BitArray[] array)
         {
             _receivedMessage = array;
         }
-        public void ResendData(PostToFirstWT _postTo, BitArray array)
+        public void ResendData(PostToFirstWT _postTo, BitArray[] array)
         {
-            if (array[0] == false || array == null)
+            if (array[0][0] == false || array == null)
             {
                 ConsoleHelper.WriteToConsoleReceipt("2 поток", _receivedMessage);
                 ConsoleHelper.WriteToConsole("2 поток", "Отправляю повторно");

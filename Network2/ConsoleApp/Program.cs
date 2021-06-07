@@ -8,8 +8,8 @@ using System.Threading;
 
 namespace ThreadsEdu
 {
-    public delegate void PostToFirstWT(BitArray message);
-    public delegate void PostToSecondWT(BitArray message);
+    public delegate void PostToFirstWT(BitArray[] message);
+    public delegate void PostToSecondWT(BitArray[] message);
     class Program
     {
         static void Main(string[] args)

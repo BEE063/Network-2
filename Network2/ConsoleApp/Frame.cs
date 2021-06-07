@@ -8,7 +8,7 @@ namespace PP_lab1
 {
     public class Frame
     {
-        public static BitArray GenerateData(string message)
+        public static BitArray[] GenerateData(string message)
         {
             byte[] bytes = System.Text.Encoding.Unicode.GetBytes(message);
             BitArray messageArray = new BitArray(bytes);
@@ -25,12 +25,9 @@ namespace PP_lab1
                     messageIntArray[i] = 0;
                 }
             }
-
-           
-
+            
             var checkStr = string.Join(" ", Array.ConvertAll(VerticalSum(ToTwoDimensionalArray(messageIntArray, bytes.Length, 8)), x => x.ToString()));
             
-            //Console.WriteLine(checkStr);
             BitArray bitArray = new BitArray(8);
             for(int i=0; i < bitArray.Length; i++)
             {
@@ -55,9 +52,17 @@ namespace PP_lab1
             {
                 total[i] = messageArray[i-bitArray.Length];
             }
+            
 
+            double package = messageArray.Length / 56;
+            BitArray[] bitArrayMatrix = new BitArray[(int)(Math.Ceiling(package))];
+            
+            if (total.Length > 56)
+            {
+                Packages(total, 2);
+            }
 
-            return total;
+            return Packages(total, (int)Math.Ceiling(package)) ;
         }
         public static int[,] ToTwoDimensionalArray(int[] array, int height, int width)
         {
@@ -72,6 +77,22 @@ namespace PP_lab1
             }
             return a;
         }
+        public static BitArray[] Packages(BitArray array, int height)
+        {
+
+            BitArray[] bitArray = new BitArray[height];
+            for (int i = 0, c = 0; i < height; i++)
+            {
+                BitArray ba = new BitArray(array.Count / height);
+                for (int j = 0; j < array.Count/height; j++, c++)
+                {
+                    ba.Set(j, array[c]);
+                }
+                bitArray[i] = ba;
+            }
+            return bitArray;
+        }
+        
         public static int[] VerticalSum(int [,] array)
         {
             int[] sumColumn = new int[8];
@@ -97,7 +118,7 @@ namespace PP_lab1
             return sumColumn;
         }
         
-        public static BitArray GenerateErrorData(string message)
+        public static BitArray[] GenerateErrorData(string message)
         {
             byte[] bytes = System.Text.Encoding.Unicode.GetBytes(message);
             BitArray messageArray = new BitArray(bytes);
@@ -124,8 +145,9 @@ namespace PP_lab1
                     array[i] = true;
                 }
             }
+           
 
-            return array;
+            return Packages(array, 84); ;
         }
 
         private static byte[] BitArrayToByteArray(BitArray bits)
@@ -135,26 +157,29 @@ namespace PP_lab1
             return ret;
         }
 
-        public static void GenerateReceipt(BitArray array, bool isValid)
+        public static void GenerateReceipt(BitArray[] array, bool isValid)
         {
+            BitArray bt = new BitArray(1);
             if (isValid == true)
             {
-                array[0] = true;
+                bt[0] = true;
+                array[0] = bt;
             }
             else
             {
-                array[0] = false;
+                bt[0] = false;
+                array[0] = bt;
             }
         }
-        public static void GenerateRequest(BitArray array, bool isValid)
+        public static void GenerateRequest(BitArray[] array, bool isValid)
         {
             if (isValid == true)
             {
-                array[0] = true;
+                array[0][0] = true;
             }
             else
             {
-                array[0] = false;
+                array[0][0] = false;
             }
         }
         
