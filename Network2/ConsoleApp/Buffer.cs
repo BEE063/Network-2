@@ -49,8 +49,7 @@ namespace PP_lab1
                  checkSum[i-9] = bitArray[i];
             }
             
-            BitArray checkType = new BitArray(1);
-            checkType[0] = true;
+            
 
             int[] messageIntArray = new int[80];
             for(int i=checkSum.Length+9; i<97; i++)
@@ -69,8 +68,18 @@ namespace PP_lab1
 
             var checkStr = string.Join(" ", Array.ConvertAll(VerticalSum(ToTwoDimensionalArray(messageIntArray, messageIntArray.Length/8, 8)), x => x.ToString()));
 
-            string checkTypeString= checkType[0].ToString();
+            string checkTypeString;
+            if (bitArray.Length > 1)
+            {
+                checkTypeString = "True";
+            }
+            else
+            {
+                checkTypeString = "False";
+            }
+            
             string typeString = type[0].ToString();
+           
             string[] flagStringArray = new string[flag.Length];
             for (int i = 0; i < flagStringArray.Length; i++)
             {
