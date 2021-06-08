@@ -64,7 +64,7 @@ namespace ConsoleApp
 
             ConsoleHelper.WriteToConsoleRequest("2 поток", "", _receivedMessage);
             ConsoleHelper.WriteToConsole("2 поток", "Подготавливаю данные.");
-            _post(Frame.GenerateData("World"));
+            _post(Frame.GenerateErrorData("World"));
 
             _sendSemaphore.Release();
             ////5
